@@ -1,8 +1,11 @@
 import streamlit as st
-import pandas as pd
 
-st.title("Career Recommender system")
-st.write("Welcome to my career analysis project!")
+st.set_page_config(page_title="Career Recommender", page_icon="🎓")
+st.title("🎓 Career Recommender System")
+st.write("Welcome, Hemvinoth! Your project is live.")
 
-df = pd.read_csv('vinoth_career_gap_analysis (1).ipynb')
-st.write(df.head())
+# Simple interactive part
+skill = st.selectbox("Select your best skill:", ["Python", "Data Science", "Web Dev"])
+if st.button("Recommend Career"):
+    st.balloons()
+    st.success(f"Based on {skill}, you should be a Senior {skill} Engineer!")
