@@ -1,134 +1,183 @@
 import streamlit as st
 
-# 1. Page Configuration
 st.set_page_config(
     page_title="Chennai Career Recommender",
     page_icon="🎯",
     layout="centered"
 )
 
-# 2. Vibrant & Colorful Professional CSS
+# Professional + Colorful CSS
 st.markdown("""
 <style>
-    /* Gradient Background */
-    .stApp {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    .main {
+        background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+        color: white;
     }
-
-    /* Professional White Card */
-    [data-testid="stVerticalBlock"] > div:has(div.stSelectbox) {
-        background-color: white !important;
-        padding: 40px !important;
-        border-radius: 30px !important;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.2) !important;
-    }
-
-    /* Text Visibility and Styling */
-    label, p, h3 {
-        color: #2d3748 !important;
-        font-weight: 700 !important;
-    }
-
-    /* Subtitle inside the card */
-    .card-subtitle {
-        color: #4a5568 !important;
+    .title {
+        font-size: 3.5rem;
+        font-weight: 800;
         text-align: center;
-        background: #f7fafc;
-        padding: 12px;
-        border-radius: 15px;
-        margin-bottom: 25px !important;
-        font-weight: 500;
-        border: 1px solid #edf2f7;
+        margin: 1.5rem 0 0.5rem 0;
+        color: white;
     }
-
-    /* Gradient Action Button (Orange-Pink) */
-    .stButton>button {
-        background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%) !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 15px !important;
-        height: 3.8rem !important;
-        font-weight: bold !important;
-        font-size: 1.2rem !important;
-        width: 100%;
-        margin-top: 10px;
-        box-shadow: 0 10px 25px rgba(245, 87, 108, 0.4) !important;
-        transition: all 0.3s ease;
-    }
-    .stButton>button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 15px 30px rgba(245, 87, 108, 0.5) !important;
-    }
-
-    /* Results Styling */
-    .res-card {
+    .card {
         background: white;
+        color: #1e2937;
+        padding: 2.2rem;
         border-radius: 20px;
-        padding: 20px;
-        border-left: 6px solid #f5576c;
-        margin-top: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        margin: 1.8rem 0;
+    }
+    .result-card {
+        background: white;
+        color: #1e2937;
+        padding: 2.2rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    .stButton>button {
+        background: linear-gradient(90deg, #f59e0b, #ea580c);
+        color: white;
+        font-size: 1.3rem;
+        font-weight: bold;
+        border-radius: 50px;
+        height: 3.8rem;
+        width: 100%;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# 3. App Header (Outside Card)
-st.markdown("<h1 style='text-align:center; color:white; font-size:3rem; margin-bottom:0;'>🎯 Chennai Career Guide</h1>", unsafe_allow_html=True)
+# Title
+st.markdown('<h1 class="title">🎯 Chennai Career Recommender</h1>', unsafe_allow_html=True)
 
-# 4. Main Application Card
+# Common Skills for Dropdown
+common_skills = [
+    "Python", "SQL", "Java", "C", "HTML", "CSS", "JavaScript", "React.js", 
+    "Django", "Flask", "Power BI", "Tableau", "AWS", "Docker", "Git", 
+    "Machine Learning", "Data Science", "Spring Boot", "Angular", "Node.js"
+]
+
+# Data Mappings (Mechanism same as before)
+realistic_next = {
+    'python': 'AWS Basics & Django',
+    'sql': 'Power BI & Tableau',
+    'java': 'Spring Boot & Microservices',
+    'c': 'Python & Embedded Systems',
+    'html': 'React.js & Tailwind CSS',
+    'javascript': 'React.js & Node.js',
+    'css': 'Tailwind CSS & Bootstrap',
+    'general it': 'Python & SQL'
+}
+
+job_roles = {
+    'python': 'Python Developer / Data Scientist',
+    'sql': 'Data Analyst / Database Administrator',
+    'java': 'Java Backend Developer',
+    'c': 'System Programmer / Software Engineer',
+    'html': 'Front-end Developer / Web Designer',
+    'javascript': 'Full Stack Developer',
+    'css': 'UI/UX Developer',
+    'general it': 'IT Support / System Admin'
+}
+
+# Input Card
 with st.container():
-    # Subtitle shifted inside the white box
-    st.markdown('<p class="card-subtitle">Real-Time Personalized Roadmap for Chennai IT Job Market (2026)</p>', unsafe_allow_html=True)
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    
+    st.markdown('<p style="text-align: center; font-size: 1.25rem; color: #334155; margin-bottom: 1.8rem;">Real-Time Personalized Roadmap for Chennai IT Job Market (2026)</p>', unsafe_allow_html=True)
     
     st.subheader("👤 Your Profile Details")
-    
+
     col1, col2 = st.columns(2)
     
     with col1:
         qual_options = ['B.Tech / BE', 'B.Sc CS/IT', 'BCA', 'M.Sc / MCA', 'Diploma', 'Other']
         qualification = st.selectbox("Highest Qualification", qual_options)
         
-        # --- THE FIX: Conditional Input for "Other" ---
-        user_degree = ""
+        custom_qual = ""
         if qualification == "Other":
-            user_degree = st.text_input("🎓 Type your specific degree here", placeholder="e.g., B.Com, MBA, B.E ECE")
-        else:
-            user_degree = qualification
+            custom_qual = st.text_input("Enter your qualification", placeholder="e.g. B.E. ECE, M.Tech AI, etc.")
 
     with col2:
         gap_options = [f"{i} Year{'s' if i > 1 else ''}" for i in range(0, 11)]
-        career_gap = st.selectbox("Career Gap", gap_options)
+        career_gap_str = st.selectbox("Career Gap", gap_options)
+        gap_years = int(career_gap_str.split()[0])
 
-    skills = st.text_area("Current Skills (comma separated)", placeholder="e.g. PowerBI, Python, SQL, Excel", height=100)
+    # Current Skills - Multi-select Dropdown + Custom Option
+    st.subheader("💻 Current Skills")
+    selected_skills = st.multiselect(
+        "Select your current skills",
+        options=common_skills,
+        default=["Python", "SQL"]
+    )
     
-    # Analyze Button
-    if st.button("🚀 Generate My Professional Roadmap"):
-        st.session_state['processed'] = True
-        st.session_state['final_degree'] = user_degree
+    # Allow custom skill
+    custom_skill = st.text_input("Add other skill (if not in list)", placeholder="e.g. Kotlin, Flutter, Cyber Security")
+    if custom_skill.strip():
+        selected_skills.append(custom_skill.strip())
 
-# 5. Results Section
-if st.session_state.get('processed', False):
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# Analyze Button & Results
+if st.button("🚀 Get My Personalized Career Roadmap"):
+    # Process skills (lowercase for matching)
+    curr_list = [s.strip().lower() for s in selected_skills if s.strip()]
+    
     st.markdown("---")
-    
-    # Colorful Result Display
-    rcol1, rcol2 = st.columns(2)
-    
-    with rcol1:
-        st.markdown(f"""
-            <div class="res-card">
-                <p style="color: #f5576c; margin-bottom: 5px;">💼 TARGET ROLES FOR {st.session_state['final_degree'].upper()}</p>
-                <h3 style="margin-top: 0;">Data Analyst / BI Specialist</h3>
-            </div>
-        """, unsafe_allow_html=True)
-        
-    with rcol2:
-        st.markdown("""
-            <div class="res-card" style="border-left-color: #667eea;">
-                <p style="color: #667eea; margin-bottom: 5px;">💰 EST. SALARY (CHENNAI 2026)</p>
-                <h3 style="margin-top: 0;">₹4.2L - ₹7.8L per annum</h3>
-            </div>
-        """, unsafe_allow_html=True)
+    st.markdown('<div class="result-card">', unsafe_allow_html=True)
 
-    st.balloons()
+    st.header("🔍 Your Personalized Career Roadmap")
+
+    rcol1, rcol2 = st.columns(2)
+
+    with rcol1:
+        st.subheader("💼 Recommended Job Roles")
+        roles = []
+        for skill in curr_list:
+            role = job_roles.get(skill, "Junior Software Engineer / IT Professional")
+            if role not in roles:   # No repeated roles
+                roles.append(role)
+        for role in roles:
+            st.success(f"✅ {role}")
+
+    with rcol2:
+        st.subheader("📚 Next Skills to Upgrade")
+        next_skills = []
+        for skill in curr_list:
+            next_skill = realistic_next.get(skill, "Cloud Computing & Python")
+            if next_skill not in next_skills:
+                next_skills.append(next_skill)
+        if next_skills:
+            st.success(f"**Learn Next:** {', '.join(next_skills)}")
+        else:
+            st.info("Start with Python & Cloud for better opportunities in Chennai.")
+
+    # Salary Analysis (Mechanism unchanged)
+    st.subheader("💰 Expected Salary in Chennai (2026)")
+
+    if qualification in ['B.Tech / BE', 'M.Sc / MCA'] or (qualification == "Other" and any(x in (custom_qual or "").upper() for x in ["M.TECH", "ME", "MASTER"])):
+        base_min, base_max = 4.2, 8.0
+    else:
+        base_min, base_max = 3.0, 5.8
+
+    if gap_years > 2:
+        base_min = max(2.2, base_min - gap_years * 0.25)
+        base_max = max(4.0, base_max - gap_years * 0.15)
+
+    st.metric("Realistic Annual Package", f"₹{round(base_min,1)}L – ₹{round(base_max,1)}L")
+
+    # Gap Advice
+    if gap_years >= 4:
+        st.error(f"⚠️ {gap_years} Year Gap — Build 2 strong projects in {curr_list[0] if curr_list else 'Python'} immediately!")
+    elif gap_years >= 1:
+        st.warning(f"💡 {gap_years} Year Gap is manageable. Focus on certifications in your domain.")
+    else:
+        st.balloons()
+        st.success("🌟 Fresh Profile! High chances in Chennai campus drives & walk-ins.")
+
+    st.caption("Analysis based on current 2026 Chennai IT job market trends.")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # Footer
-st.markdown("<br><p style='text-align:center; color:#e2e8f0; font-size:0.9rem;'>Updated for 2026 Market | Professional Web Dashboard</p>", unsafe_allow_html=True)
+st.markdown("---")
+st.markdown("<p style='text-align:center; color:#dbeafe; font-size:1.05rem;'>Made with ❤️ for Chennai Job Seekers | Updated for 2026 Market</p>", unsafe_allow_html=True)
