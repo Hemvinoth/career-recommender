@@ -1,74 +1,53 @@
 import streamlit as st
 
-# ====================== PAGE CONFIG ======================
 st.set_page_config(
     page_title="Chennai Career Recommender",
-    page_icon="🎯",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    page_icon="🎓",
+    layout="centered"
 )
 
-# ====================== CUSTOM CSS FOR COLORFUL & PROFESSIONAL LOOK ======================
+# Custom CSS - More Colorful & Professional
 st.markdown("""
 <style>
-    .main {
-        background-color: #f8fafc;
-    }
-    .stApp header {
-        background: linear-gradient(90deg, #1e40af, #3b82f6);
-        color: white;
-    }
-    .title {
-        font-size: 3rem;
-        font-weight: 700;
-        color: #1e3a8a;
-        text-align: center;
-        margin: 1rem 0;
-    }
-    .subtitle {
-        font-size: 1.4rem;
-        color: #475569;
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-    .card {
+    .main { background: linear-gradient(135deg, #f0f9ff, #e0f2fe); }
+    .hero { text-align: center; padding: 1rem 0; }
+    .title { font-size: 3.3rem; font-weight: 800; color: #1e40af; }
+    .subtitle { font-size: 1.4rem; color: #334155; }
+    .input-card, .result-card {
         background: white;
-        padding: 1.8rem;
-        border-radius: 15px;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-        margin-bottom: 1.5rem;
-    }
-    .metric-card {
-        background: linear-gradient(135deg, #2563eb, #60a5fa);
-        color: white;
-        padding: 1.5rem;
-        border-radius: 12px;
-        text-align: center;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        margin: 1.5rem 0;
     }
     .stButton>button {
-        background: linear-gradient(90deg, #3b82f6, #1e40af);
+        background: linear-gradient(90deg, #2563eb, #1d4ed8);
         color: white;
+        font-size: 1.25rem;
         font-weight: bold;
-        border-radius: 10px;
-        height: 3.2rem;
-        font-size: 1.1rem;
+        border-radius: 50px;
+        height: 3.8rem;
+        width: 100%;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ====================== HEADER ======================
-st.markdown('<h1 class="title">🎓 Chennai Career Recommender</h1>', unsafe_allow_html=True)
-st.markdown('<p class="subtitle">Real-Time Personalized Roadmap for Chennai IT Job Market (2026)</p>', unsafe_allow_html=True)
-st.markdown("---")
+# ====================== HERO SECTION WITH CAREER IMAGE ======================
+st.markdown('<div class="hero">', unsafe_allow_html=True)
 
-# ====================== DATA MAPPINGS ======================
+# Career-based Hero Image (Chennai IT / Career Growth Theme)
+hero_image_url = "https://source.unsplash.com/featured/1200x400/?career,technology,india"
+st.image(hero_image_url, use_container_width=True)
+
+st.markdown('🎓 <span class="title">Chennai Career Recommender</span>', unsafe_allow_html=True)
+st.markdown('<p class="subtitle">Real-Time Personalized Roadmap for Chennai IT Job Market (2026)</p>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Data (same as before)
 realistic_next = {
-    'python': 'AWS Basics & Django',
-    'sql': 'Power BI & Tableau',
-    'java': 'Spring Boot & Microservices',
-    'c': 'Python & Embedded Systems',
-    'html': 'React.js & Tailwind CSS',
-    'general it': 'Python & SQL'
+    'python': 'AWS Basics & Django', 'sql': 'Power BI & Tableau',
+    'java': 'Spring Boot & Microservices', 'c': 'Python & Embedded Systems',
+    'html': 'React.js & Tailwind CSS', 'general it': 'Python & SQL'
 }
 
 job_roles = {
@@ -80,96 +59,78 @@ job_roles = {
     'general it': 'IT Support / System Admin'
 }
 
-# ====================== INPUT SECTION (Sidebar) ======================
-with st.sidebar:
-    st.header("👤 Enter Your Details")
-    
-    qual_options = ['B.Tech / BE', 'B.Sc CS/IT', 'BCA', 'M.Sc / MCA', 'Diploma', 'Other']
-    qualification = st.selectbox("Highest Qualification", options=qual_options)
-    
-    custom_qual = ""
-    if qualification == "Other":
-        custom_qual = st.text_input("Please specify your qualification", 
-                                  placeholder="e.g. B.E. Electronics, M.Tech AI, etc.")
-    
-    # Professional Dropdown for Career Gap
-    gap_options = [f"{i} Year{'s' if i > 1 else ''}" for i in range(0, 11)]
-    career_gap_str = st.selectbox("Career Gap", options=gap_options)
-    gap_years = int(career_gap_str.split()[0])
-    
-    current_skills = st.text_area(
-        "Current Skills (comma separated)",
-        value="Python, SQL",
-        placeholder="Python, Java, SQL, HTML, React",
-        height=120
-    )
+# ====================== INPUT SECTION ======================
+with st.container():
+    st.markdown('<div class="input-card">', unsafe_allow_html=True)
+    st.subheader("👤 Your Profile Details")
 
-# ====================== MAIN BUTTON ======================
-if st.button("🚀 Get My Personalized Career Roadmap", type="primary", use_container_width=True):
-    
-    curr_list = [s.strip().lower() for s in current_skills.split(',') if s.strip()]
-    
-    st.markdown("---")
-    st.header("🔍 Your Personalized Career Roadmap")
-    
-    # Two Column Layout
     col1, col2 = st.columns(2)
-    
     with col1:
-        st.subheader("💼 Recommended Job Roles")
-        roles = [job_roles.get(skill, "Junior Software Engineer") for skill in curr_list]
-        roles = list(set(roles))
-        for role in roles:
-            st.success(f"✅ {role}")
-    
-    with col2:
-        st.subheader("📚 Next Skills to Upgrade")
-        next_skills = [realistic_next.get(skill, "Python & Cloud Basics") for skill in curr_list]
-        next_skills = list(set(next_skills))
-        if next_skills:
-            st.success(f"**Learn Next:** {', '.join(next_skills)}")
-        else:
-            st.info("Start learning **Python** — highest demand in Chennai.")
+        qual_options = ['B.Tech / BE', 'B.Sc CS/IT', 'BCA', 'M.Sc / MCA', 'Diploma', 'Other']
+        qualification = st.selectbox("Highest Qualification", qual_options)
+        custom_qual = st.text_input("Specify if Other", placeholder="e.g. B.E. ECE") if qualification == "Other" else ""
 
-    # ====================== SALARY ANALYSIS ======================
-    st.markdown("### 💰 Expected Salary in Chennai IT Market (2026)")
-    
-    # Salary Calculation Logic
-    if qualification in ['B.Tech / BE', 'M.Sc / MCA'] or (qualification == "Other" and any(x in custom_qual.upper() for x in ["M.TECH", "ME", "MASTER"])):
-        base_min = 4.2
-        base_max = 8.0
-    else:
-        base_min = 3.0
-        base_max = 5.8
-    
-    # Apply gap penalty
-    if gap_years > 2:
-        base_min = max(2.2, base_min - (gap_years * 0.25))
-        base_max = max(4.0, base_max - (gap_years * 0.15))
-    
-    st.metric(
-        label="Realistic Monthly Salary Range",
-        value=f"₹{round(base_min, 1)}L – ₹{round(base_max, 1)}L per annum",
-        delta="Based on OMR, Siruseri, Guindy & Tidel Park"
-    )
-    
-    # Gap Advice
+    with col2:
+        gap_options = [f"{i} Year{'s' if i > 1 else ''}" for i in range(0, 11)]
+        career_gap_str = st.selectbox("Career Gap", gap_options)
+        gap_years = int(career_gap_str.split()[0])
+
+    current_skills = st.text_area("Current Skills (comma separated)", value="Python, SQL", placeholder="Python, Java, SQL, HTML", height=100)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ====================== BUTTON & RESULTS ======================
+if st.button("🚀 Get My Personalized Career Roadmap"):
+    curr_list = [s.strip().lower() for s in current_skills.split(',') if s.strip()]
+
     st.markdown("---")
+    st.markdown('<div class="result-card">', unsafe_allow_html=True)
+
+    st.header("🔍 Your Personalized Career Roadmap")
+
+    # Career Images in Results
+    rcol1, rcol2 = st.columns(2)
+
+    with rcol1:
+        st.subheader("💼 Recommended Job Roles")
+        st.image("https://source.unsplash.com/featured/600x300/?job,career", use_container_width=True)
+        roles = [job_roles.get(skill, "Junior Software Engineer") for skill in curr_list]
+        for role in list(set(roles)):
+            st.success(f"✅ {role}")
+
+    with rcol2:
+        st.subheader("📚 Next Skills to Upgrade")
+        st.image("https://source.unsplash.com/featured/600x300/?skills,learning", use_container_width=True)
+        next_skills = [realistic_next.get(skill, "Python & Cloud") for skill in curr_list]
+        if next_skills:
+            st.success(f"**Learn Next:** {', '.join(list(set(next_skills)))}")
+
+    # Salary with image
+    st.subheader("💰 Expected Salary in Chennai (2026)")
+    st.image("https://source.unsplash.com/featured/800x250/?salary,money,growth", use_container_width=True)
+
+    # Salary logic (same accurate calculation)
+    if qualification in ['B.Tech / BE', 'M.Sc / MCA'] or (qualification == "Other" and any(x in custom_qual.upper() for x in ["M.TECH","ME","MASTER"])):
+        base_min, base_max = 4.2, 8.0
+    else:
+        base_min, base_max = 3.0, 5.8
+
+    if gap_years > 2:
+        base_min = max(2.2, base_min - gap_years * 0.25)
+        base_max = max(4.0, base_max - gap_years * 0.15)
+
+    st.metric("Realistic Annual Package", f"₹{round(base_min,1)}L – ₹{round(base_max,1)}L", delta="Chennai IT Parks")
+
+    # Gap Advice
     if gap_years >= 4:
-        st.error(f"⚠️ **{gap_years} Year Gap** – Chennai recruiters are strict. Build 2 strong projects in {curr_list[0] if curr_list else 'Python'} immediately and add certifications.")
+        st.error(f"⚠️ {gap_years} Year Gap — Build 2 strong projects immediately!")
     elif gap_years >= 1:
-        st.warning(f"💡 **{gap_years} Year Gap** is manageable. Focus on certifications + live projects in {next_skills[0] if next_skills else 'Python & Cloud'}.")
+        st.warning(f"💡 {gap_years} Year Gap manageable. Focus on certifications.")
     else:
         st.balloons()
-        st.success("🌟 **Fresh Profile!** Excellent chances in Chennai campus drives and walk-ins.")
+        st.success("🌟 Fresh Profile! High chances in Chennai walk-ins.")
 
-    st.caption("Salary data based on 2026 Chennai IT trends from Naukri, LinkedIn & Glassdoor.")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-# ====================== FOOTER ======================
+# Footer
 st.markdown("---")
-st.markdown(
-    "<p style='text-align: center; color: #64748b; font-size: 0.95rem;'>"
-    "Made with ❤️ for Chennai Job Seekers | Updated for 2026 IT Market"
-    "</p>",
-    unsafe_allow_html=True
-)
+st.markdown("<p style='text-align:center;color:#64748b;'>Made with ❤️ for Chennai Job Seekers | 2026 Market</p>", unsafe_allow_html=True)
