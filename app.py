@@ -173,7 +173,7 @@ if st.button("🚀 Get My Personalized Career Roadmap"):
 # Footer - Fixed visibility
 st.markdown("---")
 st.markdown(
-    "<p style='text-align:center; color:#dbeafe; font-size:1.1rem; margin-top: 1rem;'>"
+    "<p style='text-align:center; color:#black; font-size:1.1rem; margin-top: 1rem;'>"
     "Made with ❤️ for Chennai Job Seekers | Updated for 2026 Market"
     "</p>",
     unsafe_allow_html=True
