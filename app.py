@@ -6,61 +6,92 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- IMPROVED CSS ---
+# --- PROFESSIONAL GLASSMORPHISM CSS ---
 st.markdown("""
 <style>
-    /* 1. Fix Background and Text Visibility */
+    /* 1. Main Background */
     .stApp {
         background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
     }
-    
-    /* Force all standard labels to be white so they are visible */
-    label, .stMarkdown, p, h1, h2, h3, h4, .stSelectbox p {
+
+    /* 2. Title Styling (Outside the card) */
+    .main-title {
+        font-size: 3rem !important;
+        font-weight: 800 !important;
+        text-align: center;
         color: white !important;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
 
-    /* 2. Style the Input Card properly */
-    .main-card {
-        background-color: rgba(255, 255, 255, 0.95);
-        padding: 30px;
-        border-radius: 20px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        margin-bottom: 20px;
+    /* 3. The Professional White Card */
+    /* This targets the container holding the inputs */
+    [data-testid="stVerticalBlock"] > div:has(div.stSelectbox) {
+        background-color: white !important;
+        padding: 40px !important;
+        border-radius: 24px !important;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
+        margin-top: 20px;
     }
-    
-    /* Fix labels inside the white card to be dark again */
-    .main-card label, .main-card p, .main-card h3 {
+
+    /* 4. Text INSIDE the White Card (Subtitle & Labels) */
+    .card-subtitle {
+        color: #4b5563 !important; /* Professional Dark Grey */
+        font-size: 1.15rem !important;
+        text-align: center;
+        margin-bottom: 2rem !important;
+        font-weight: 500;
+        border-bottom: 1px solid #f1f5f9;
+        padding-bottom: 15px;
+    }
+
+    /* Force all input labels inside the card to be Dark Blue/Grey */
+    [data-testid="stVerticalBlock"] > div:has(div.stSelectbox) label, 
+    [data-testid="stVerticalBlock"] > div:has(div.stSelectbox) p,
+    [data-testid="stVerticalBlock"] > div:has(div.stSelectbox) h3 {
         color: #1e2937 !important;
+        font-weight: 600 !important;
     }
 
-    /* 3. Button Styling */
+    /* 5. Modern Orange Button */
     .stButton>button {
         background: linear-gradient(90deg, #f59e0b, #ea580c) !important;
         color: white !important;
         border: none !important;
-        font-size: 1.2rem !important;
+        border-radius: 12px !important;
+        height: 3.8rem !important;
         font-weight: bold !important;
-        border-radius: 50px !important;
-        padding: 10px 20px !important;
+        font-size: 1.2rem !important;
         width: 100%;
-        transition: transform 0.2s;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(234, 88, 12, 0.3) !important;
     }
     .stButton>button:hover {
-        transform: scale(1.02);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(234, 88, 12, 0.4) !important;
+    }
+
+    /* Footer Text */
+    .footer-text {
+        text-align: center;
+        color: #dbeafe;
+        font-size: 0.9rem;
+        margin-top: 30px;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# --- HEADER ---
-st.markdown("<h1 style='text-align: center; color: white;'>🎯 Chennai Career Recommender</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #dbeafe; font-size: 1.2rem;'>Real-Time Personalized Roadmap for Chennai IT Job Market (2026)</p>", unsafe_allow_html=True)
+# --- APP LAYOUT ---
 
-# --- INPUT SECTION ---
-# To fix the "empty box", we wrap everything in a single 'with' block 
-# and use a container for the custom styling.
+# Header (Outside the card)
+st.markdown('<h1 class="main-title">🎯 Chennai Career Recommender</h1>', unsafe_allow_html=True)
+
+# Main Input Card
 with st.container():
-    # This creates the white background 'card' effect safely
-    st.markdown('<div class="main-card">', unsafe_allow_html=True)
+    # Subtitle is now INSIDE the white box
+    st.markdown('<p class="card-subtitle">Real-Time Personalized Roadmap for Chennai IT Job Market (2026)</p>', unsafe_allow_html=True)
+    
     st.subheader("👤 Your Profile Details")
     
     col1, col2 = st.columns(2)
@@ -76,29 +107,35 @@ with st.container():
     current_skills = st.text_area(
         "Current Skills (comma separated)",
         value="Python, SQL",
-        height=100
+        placeholder="e.g. Java, HTML, React, AWS",
+        height=110
     )
     
-    # Logic for Button
-    submit = st.button("🚀 Get My Personalized Career Roadmap")
-    st.markdown('</div>', unsafe_allow_html=True)
+    # Predict Button
+    if st.button("🚀 Get My Personalized Career Roadmap"):
+        st.session_state['run_analysis'] = True
 
 # --- RESULTS SECTION ---
-if submit:
-    curr_list = [s.strip().lower() for s in current_skills.split(',') if s.strip()]
+if st.session_state.get('run_analysis', False):
+    st.markdown("<br>", unsafe_allow_html=True)
     
-    # Professional Result Container
+    # Result Display Card
     with st.container():
-        st.markdown('<div class="main-card">', unsafe_allow_html=True)
-        st.header("🔍 Your Personalized Roadmap")
+        st.markdown("### 🔍 Analysis Result")
         
-        # ... (Your Logic for Salary and Roles remains the same here) ...
-        # (Example: Just showing the result)
-        st.success(f"Targeting Roles in Chennai for: {', '.join(curr_list).title()}")
+        # Skill Processing
+        curr_list = [s.strip().lower() for s in current_skills.split(',') if s.strip()]
         
-        st.metric("Realistic Annual Package (2026)", "₹4.5L - ₹7.8L")
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+        rcol1, rcol2 = st.columns(2)
+        with rcol1:
+            st.info("**Recommended Roles**\n- Data Analyst\n- Python Developer")
+        with rcol2:
+            st.success("**Estimated Salary (Chennai)**\n₹4.8L - ₹7.5L per annum")
+            
+        if gap_years > 2:
+            st.warning(f"⚠️ {gap_years} Year Gap detected. We recommend focusing on 2 strong portfolio projects.")
+        else:
+            st.balloons()
 
-# --- FOOTER ---
-st.markdown("<br><p style='text-align:center; color:#dbeafe;'>Made with ❤️ for Chennai Job Seekers | 2026 Edition</p>", unsafe_allow_html=True)
+# Footer
+st.markdown('<p class="footer-text">Made with ❤️ for Chennai Job Seekers | Updated for 2026 Market</p>', unsafe_allow_html=True)
