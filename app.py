@@ -6,78 +6,83 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- PROFESSIONAL GLASSMORPHISM CSS ---
+# --- DRIBBBLE-STYLE CLEAN & COLORFUL CSS ---
 st.markdown("""
 <style>
-    /* 1. Main Background */
+    /* 1. Light Professional Background */
     .stApp {
-        background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+        background-color: #F8FAFC;
     }
 
-    /* 2. Title Styling (Outside the card) */
+    /* 2. Main Title (Dark & Professional) */
     .main-title {
         font-size: 3rem !important;
         font-weight: 800 !important;
         text-align: center;
-        color: white !important;
+        color: #1e293b !important;
+        margin-top: 2rem;
         margin-bottom: 0.5rem;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
 
-    /* 3. The Professional White Card */
-    /* This targets the container holding the inputs */
+    /* 3. The Professional White Card (Fixes the "Empty Box" issue) */
     [data-testid="stVerticalBlock"] > div:has(div.stSelectbox) {
         background-color: white !important;
-        padding: 40px !important;
-        border-radius: 24px !important;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
-        margin-top: 20px;
+        padding: 45px !important;
+        border-radius: 28px !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.04) !important;
+        border: 1px solid #e2e8f0;
+        margin-top: 10px;
     }
 
-    /* 4. Text INSIDE the White Card (Subtitle & Labels) */
+    /* 4. Subtitle Inside the White Card */
     .card-subtitle {
-        color: #4b5563 !important; /* Professional Dark Grey */
-        font-size: 1.15rem !important;
+        color: #64748b !important;
+        font-size: 1.1rem !important;
         text-align: center;
         margin-bottom: 2rem !important;
+        background: #f1f5f9;
+        padding: 12px;
+        border-radius: 12px;
         font-weight: 500;
-        border-bottom: 1px solid #f1f5f9;
-        padding-bottom: 15px;
     }
 
-    /* Force all input labels inside the card to be Dark Blue/Grey */
-    [data-testid="stVerticalBlock"] > div:has(div.stSelectbox) label, 
-    [data-testid="stVerticalBlock"] > div:has(div.stSelectbox) p,
-    [data-testid="stVerticalBlock"] > div:has(div.stSelectbox) h3 {
-        color: #1e2937 !important;
+    /* 5. Input Labels (Clean Dark Grey) */
+    label, p, h3 {
+        color: #334155 !important;
         font-weight: 600 !important;
     }
 
-    /* 5. Modern Orange Button */
+    /* 6. Vibrant Action Button (Dribbble Orange Gradient) */
     .stButton>button {
-        background: linear-gradient(90deg, #f59e0b, #ea580c) !important;
+        background: linear-gradient(135deg, #FF4B2B 0%, #FF416C 100%) !important;
         color: white !important;
         border: none !important;
-        border-radius: 12px !important;
+        border-radius: 14px !important;
         height: 3.8rem !important;
-        font-weight: bold !important;
+        font-weight: 700 !important;
         font-size: 1.2rem !important;
         width: 100%;
-        margin-top: 20px;
+        margin-top: 15px;
+        box-shadow: 0 8px 20px rgba(255, 75, 43, 0.25) !important;
         transition: all 0.3s ease;
-        box-shadow: 0 8px 20px rgba(234, 88, 12, 0.3) !important;
     }
     .stButton>button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 12px 25px rgba(234, 88, 12, 0.4) !important;
+        box-shadow: 0 12px 25px rgba(255, 75, 43, 0.35) !important;
     }
 
-    /* Footer Text */
-    .footer-text {
-        text-align: center;
-        color: #dbeafe;
-        font-size: 0.9rem;
-        margin-top: 30px;
+    /* 7. Results Dashboard Styling */
+    .result-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        border: 1px solid #e2e8f0;
+        margin-top: 20px;
+    }
+    .accent-text {
+        color: #FF416C;
+        font-weight: 800;
+        font-size: 1.5rem;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -87,9 +92,9 @@ st.markdown("""
 # Header (Outside the card)
 st.markdown('<h1 class="main-title">🎯 Chennai Career Recommender</h1>', unsafe_allow_html=True)
 
-# Main Input Card
+# Main Input Card Container
 with st.container():
-    # Subtitle is now INSIDE the white box
+    # Subtitle is now INSIDE the white box, perfectly visible
     st.markdown('<p class="card-subtitle">Real-Time Personalized Roadmap for Chennai IT Job Market (2026)</p>', unsafe_allow_html=True)
     
     st.subheader("👤 Your Profile Details")
@@ -112,30 +117,38 @@ with st.container():
     )
     
     # Predict Button
-    if st.button("🚀 Get My Personalized Career Roadmap"):
-        st.session_state['run_analysis'] = True
+    predict = st.button("🚀 Get My Personalized Career Roadmap")
 
 # --- RESULTS SECTION ---
-if st.session_state.get('run_analysis', False):
-    st.markdown("<br>", unsafe_allow_html=True)
+if predict:
+    st.markdown("---")
+    st.markdown("### 🔍 Your Personalized Roadmap")
     
-    # Result Display Card
-    with st.container():
-        st.markdown("### 🔍 Analysis Result")
-        
-        # Skill Processing
-        curr_list = [s.strip().lower() for s in current_skills.split(',') if s.strip()]
-        
-        rcol1, rcol2 = st.columns(2)
-        with rcol1:
-            st.info("**Recommended Roles**\n- Data Analyst\n- Python Developer")
-        with rcol2:
-            st.success("**Estimated Salary (Chennai)**\n₹4.8L - ₹7.5L per annum")
-            
-        if gap_years > 2:
-            st.warning(f"⚠️ {gap_years} Year Gap detected. We recommend focusing on 2 strong portfolio projects.")
-        else:
-            st.balloons()
+    # Dashboard-style results
+    rcol1, rcol2 = st.columns(2)
+    
+    with rcol1:
+        st.markdown(f"""
+            <div class="result-card">
+                <p style="color: #64748b; margin-bottom: 5px;">💼 TARGET ROLES</p>
+                <div class="accent-text">Python Developer / Data Scientist</div>
+            </div>
+        """, unsafe_allow_html=True)
+
+    with rcol2:
+        st.markdown(f"""
+            <div class="result-card">
+                <p style="color: #64748b; margin-bottom: 5px;">💰 EST. SALARY (2026)</p>
+                <div class="accent-text" style="color: #10b981;">₹4.8L - ₹7.5L</div>
+            </div>
+        """, unsafe_allow_html=True)
+
+    # Manageability warning for gaps
+    if gap_years >= 1:
+        st.warning(f"💡 {gap_years} Year Career Gap: Focus on building a strong GitHub portfolio with 2 fresh projects.")
+    else:
+        st.balloons()
+        st.success("🌟 Fresh Profile! High chances in Chennai walk-ins.")
 
 # Footer
-st.markdown('<p class="footer-text">Made with ❤️ for Chennai Job Seekers | Updated for 2026 Market</p>', unsafe_allow_html=True)
+st.markdown("<br><p style='text-align:center; color:#94a3b8; font-size:0.9rem;'>Made with ❤️ for Chennai Job Seekers | Updated for 2026 Market</p>", unsafe_allow_html=True)
