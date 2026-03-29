@@ -119,7 +119,8 @@ if st.button("🚀 Get My Personalized Career Roadmap"):
     curr_list = [s.strip().lower() for s in selected_skills if s.strip()]
 
     st.markdown("---")
-    st.markdown('<div class="result-card">', unsafe_allow_html=True)
+    st.markdown('<p class="inside-subtitle">Real-Time Personalized Roadmap for Chennai IT Job Market (2026)</p>', unsafe_allow_html=True)
+    
 
     st.header("🔍 Your Personalized Career Roadmap")
 
