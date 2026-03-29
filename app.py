@@ -14,7 +14,7 @@ st.markdown("""
         color: white;
     }
     .title {
-        font-size: 3.5rem;
+        font-size: 3.4rem;
         font-weight: 800;
         text-align: center;
         margin: 1.5rem 0 0.5rem 0;
@@ -23,50 +23,44 @@ st.markdown("""
     .card {
         background: white;
         color: #1e2937;
-        padding: 2.2rem;
+        padding: 2rem;
         border-radius: 20px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        margin: 1.8rem 0;
+        margin: 1.5rem 0;
     }
     .result-card {
         background: white;
         color: #1e2937;
-        padding: 2.2rem;
+        padding: 2rem;
         border-radius: 20px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     }
     .stButton>button {
         background: linear-gradient(90deg, #f59e0b, #ea580c);
         color: white;
-        font-size: 1.3rem;
+        font-size: 1.25rem;
         font-weight: bold;
         border-radius: 50px;
-        height: 3.8rem;
+        height: 3.7rem;
         width: 100%;
+    }
+    /* Clean multiselect - no pink box */
+    .stMultiSelect [data-baseweb="tag"] {
+        background-color: #e0f2fe !important;
+        color: #1e40af !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Title
+# Title at Top
 st.markdown('<h1 class="title">🎯 Chennai Career Recommender</h1>', unsafe_allow_html=True)
 
-# Common Skills for Dropdown
-common_skills = [
-    "Python", "SQL", "Java", "C", "HTML", "CSS", "JavaScript", "React.js", 
-    "Django", "Flask", "Power BI", "Tableau", "AWS", "Docker", "Git", 
-    "Machine Learning", "Data Science", "Spring Boot", "Angular", "Node.js"
-]
-
-# Data Mappings (Mechanism same as before)
+# Data
 realistic_next = {
-    'python': 'AWS Basics & Django',
-    'sql': 'Power BI & Tableau',
-    'java': 'Spring Boot & Microservices',
-    'c': 'Python & Embedded Systems',
-    'html': 'React.js & Tailwind CSS',
-    'javascript': 'React.js & Node.js',
-    'css': 'Tailwind CSS & Bootstrap',
-    'general it': 'Python & SQL'
+    'python': 'AWS Basics & Django', 'sql': 'Power BI & Tableau',
+    'java': 'Spring Boot & Microservices', 'c': 'Python & Embedded Systems',
+    'html': 'React.js & Tailwind CSS', 'javascript': 'React.js & Node.js',
+    'css': 'Tailwind CSS & Bootstrap', 'general it': 'Python & SQL'
 }
 
 job_roles = {
@@ -80,49 +74,50 @@ job_roles = {
     'general it': 'IT Support / System Admin'
 }
 
-# Input Card
+common_skills = [
+    "Python", "SQL", "Java", "C", "HTML", "CSS", "JavaScript", "React.js", 
+    "Django", "Power BI", "Tableau", "AWS", "Docker", "Git", "Machine Learning"
+]
+
+# Input Card - Subtitle INSIDE white box
 with st.container():
     st.markdown('<div class="card">', unsafe_allow_html=True)
     
-    st.markdown('<p style="text-align: center; font-size: 1.25rem; color: #334155; margin-bottom: 1.8rem;">Real-Time Personalized Roadmap for Chennai IT Job Market (2026)</p>', unsafe_allow_html=True)
+    # Subtitle moved inside white box
+    st.markdown('<p style="text-align: center; font-size: 1.25rem; color: #334155; margin-bottom: 1.5rem; font-weight: 600;">Real-Time Personalized Roadmap for Chennai IT Job Market (2026)</p>', unsafe_allow_html=True)
     
     st.subheader("👤 Your Profile Details")
 
     col1, col2 = st.columns(2)
-    
     with col1:
         qual_options = ['B.Tech / BE', 'B.Sc CS/IT', 'BCA', 'M.Sc / MCA', 'Diploma', 'Other']
         qualification = st.selectbox("Highest Qualification", qual_options)
-        
-        custom_qual = ""
-        if qualification == "Other":
-            custom_qual = st.text_input("Enter your qualification", placeholder="e.g. B.E. ECE, M.Tech AI, etc.")
+        custom_qual = st.text_input("Enter your qualification", placeholder="e.g. B.E. ECE, M.Tech AI") if qualification == "Other" else ""
 
     with col2:
         gap_options = [f"{i} Year{'s' if i > 1 else ''}" for i in range(0, 11)]
         career_gap_str = st.selectbox("Career Gap", gap_options)
         gap_years = int(career_gap_str.split()[0])
 
-    # Current Skills - Multi-select Dropdown + Custom Option
+    # Current Skills - Multi-select Dropdown
     st.subheader("💻 Current Skills")
     selected_skills = st.multiselect(
         "Select your current skills",
         options=common_skills,
-        default=["Python", "SQL"]
+        default=["Python", "SQL"],
+        help="You can select multiple skills"
     )
     
-    # Allow custom skill
-    custom_skill = st.text_input("Add other skill (if not in list)", placeholder="e.g. Kotlin, Flutter, Cyber Security")
+    custom_skill = st.text_input("Add any other skill (optional)", placeholder="e.g. Kotlin, Flutter, Cyber Security")
     if custom_skill.strip():
         selected_skills.append(custom_skill.strip())
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-# Analyze Button & Results
+# Main Button & Results
 if st.button("🚀 Get My Personalized Career Roadmap"):
-    # Process skills (lowercase for matching)
     curr_list = [s.strip().lower() for s in selected_skills if s.strip()]
-    
+
     st.markdown("---")
     st.markdown('<div class="result-card">', unsafe_allow_html=True)
 
@@ -135,7 +130,7 @@ if st.button("🚀 Get My Personalized Career Roadmap"):
         roles = []
         for skill in curr_list:
             role = job_roles.get(skill, "Junior Software Engineer / IT Professional")
-            if role not in roles:   # No repeated roles
+            if role not in roles:
                 roles.append(role)
         for role in roles:
             st.success(f"✅ {role}")
@@ -144,15 +139,13 @@ if st.button("🚀 Get My Personalized Career Roadmap"):
         st.subheader("📚 Next Skills to Upgrade")
         next_skills = []
         for skill in curr_list:
-            next_skill = realistic_next.get(skill, "Cloud Computing & Python")
-            if next_skill not in next_skills:
-                next_skills.append(next_skill)
+            ns = realistic_next.get(skill, "Cloud Computing & Python")
+            if ns not in next_skills:
+                next_skills.append(ns)
         if next_skills:
             st.success(f"**Learn Next:** {', '.join(next_skills)}")
-        else:
-            st.info("Start with Python & Cloud for better opportunities in Chennai.")
 
-    # Salary Analysis (Mechanism unchanged)
+    # Salary Section
     st.subheader("💰 Expected Salary in Chennai (2026)")
 
     if qualification in ['B.Tech / BE', 'M.Sc / MCA'] or (qualification == "Other" and any(x in (custom_qual or "").upper() for x in ["M.TECH", "ME", "MASTER"])):
@@ -166,11 +159,10 @@ if st.button("🚀 Get My Personalized Career Roadmap"):
 
     st.metric("Realistic Annual Package", f"₹{round(base_min,1)}L – ₹{round(base_max,1)}L")
 
-    # Gap Advice
     if gap_years >= 4:
-        st.error(f"⚠️ {gap_years} Year Gap — Build 2 strong projects in {curr_list[0] if curr_list else 'Python'} immediately!")
+        st.error(f"⚠️ {gap_years} Year Gap — Build 2 strong projects immediately!")
     elif gap_years >= 1:
-        st.warning(f"💡 {gap_years} Year Gap is manageable. Focus on certifications in your domain.")
+        st.warning(f"💡 {gap_years} Year Gap is manageable.")
     else:
         st.balloons()
         st.success("🌟 Fresh Profile! High chances in Chennai campus drives & walk-ins.")
@@ -178,6 +170,11 @@ if st.button("🚀 Get My Personalized Career Roadmap"):
     st.caption("Analysis based on current 2026 Chennai IT job market trends.")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# Footer
+# Footer - Fixed visibility
 st.markdown("---")
-st.markdown("<p style='text-align:center; color:#dbeafe; font-size:1.05rem;'>Made with ❤️ for Chennai Job Seekers | Updated for 2026 Market</p>", unsafe_allow_html=True)
+st.markdown(
+    "<p style='text-align:center; color:#dbeafe; font-size:1.1rem; margin-top: 1rem;'>"
+    "Made with ❤️ for Chennai Job Seekers | Updated for 2026 Market"
+    "</p>",
+    unsafe_allow_html=True
+)
